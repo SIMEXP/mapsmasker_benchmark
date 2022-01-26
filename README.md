@@ -1,7 +1,7 @@
 # mapsmasker_benchmark
-Easy benchmark on the performance of nilearn NiftiMapsMasker
+Easy benchmark on the performance of nilearn `NiftiMapsMasker``
 
-Please install nilearn through `requirements.txt`. We are using a customised version of `NiftiLabelMasker`
+Please install nilearn through `requirements.txt`. We are using a customised version of `NiftiMapsMasker`
 
 We added an option to do a simple linear fit:
 https://github.com/htwangtw/nilearn/blob/ef98392f74bd42d12f4382dcca67725880943133/nilearn/regions/signal_extraction.py#L298-L305
