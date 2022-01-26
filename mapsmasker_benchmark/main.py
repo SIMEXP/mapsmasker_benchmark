@@ -28,7 +28,7 @@ if __name__ == '__main__':
     high_dim_difumo = fetch_atlas_difumo(dimension=256, resolution_mm=3, data_dir=Path(__file__).parents[1] / 'data')
 
     difumo_pcc = index_img(atals.maps, 3)
-    bin_pcc = binarize_img(difumo_pcc, threshold="50%")
+    bin_pcc = binarize_img(difumo_pcc)
 
 
     @timer_func
