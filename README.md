@@ -10,5 +10,5 @@ Dataset used: ADHD200
 
 Two benchmarking metrics:
 1. Run time of time series extraction from the 256 dimensions difumo atlas with confound regression
-2. R^2 of raw time series and masker extracted from PCC (taken from difumo 64 dimensions map 4)
-   The raw time series was the average signal extracted using a binarised mask of difumo 64 dimensions map 4.
+2. R^2 of raw time series and masker extracted from PCC (taken from [difumo 64 dimensions map 4](https://parietal-inria.github.io/DiFuMo/64/html/4.html))
+   The raw time series was the average signal extracted using a binarised mask of [difumo 64 dimensions map 4](https://parietal-inria.github.io/DiFuMo/64/html/4.html).
