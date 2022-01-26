@@ -1,6 +1,8 @@
 # mapsmasker_benchmark
 Easy benchmark on the performance of nilearn NiftiMapsMasker
 
+Please install nilearn through `requirements.txt`. We are using a customised version of `NiftiLabelMasker`
+
 Dataset used: ADHD200
 
 Two benchmarking metrics:
