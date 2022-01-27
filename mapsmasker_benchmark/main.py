@@ -69,5 +69,6 @@ if __name__ == '__main__':
                 cur_r2[strategy] = r2
             r2_collector.append(cur_r2)
         r2_collector = pd.DataFrame(r2_collector)
+        print("correlation betwee the R2 of two strategies.")
         print(r2_collector.corr())
         print(f'=====================================')
