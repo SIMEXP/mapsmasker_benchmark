@@ -36,6 +36,8 @@ if __name__ == '__main__':
 
 
     for dim in DIFUMO_DIM:
+        print(f'================={dim}=================')
+
         atals = fetch_atlas_difumo(dimension=dim,
                                 resolution_mm=3,
                                 data_dir=Path(__file__).parents[1] / 'data')
@@ -48,12 +50,11 @@ if __name__ == '__main__':
             print("")
 
         print('===============================')
-
+        print(f"...get R2 for each dimension")
         r2_collector = []
         for i in range(dim):
             cur_dim = index_img(atals.maps, i)
             cur_dim_bin = binarize_img(cur_dim)
-            print(f"...get R2 for dimension {i+1}")
 
             masker = NiftiLabelsMasker(cur_dim_bin, strategy='mean', detrend=True)
             original = masker.fit_transform(dataset.func[0],
@@ -69,3 +70,4 @@ if __name__ == '__main__':
             r2_collector.append(cur_r2)
         r2_collector = pd.DataFrame(r2_collector)
         print(r2_collector.corr())
+        print(f'=====================================')
