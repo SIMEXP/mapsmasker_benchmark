@@ -1,5 +1,5 @@
 # mapsmasker_benchmark
-Easy benchmark on the performance of nilearn `NiftiMapsMasker``
+Easy benchmark on the performance of nilearn `NiftiMapsMasker`
 
 Please install nilearn through `requirements.txt`. We are using a customised version of `NiftiMapsMasker`
 
