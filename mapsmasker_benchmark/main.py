@@ -4,12 +4,12 @@ import warnings
 warnings.filterwarnings(action='ignore')
 
 from pathlib import Path
+import numpy as np
+
 from nilearn.maskers import NiftiMapsMasker, NiftiMasker
 from nilearn.datasets import fetch_atlas_difumo, fetch_adhd
-from nilearn.image import load_img, math_img, mean_img, binarize_img
-from nilearn.plotting import view_img
-import numpy as np
-import nibabel as nb
+from nilearn.image import load_img, mean_img, binarize_img
+
 from time import time
 
 
@@ -28,39 +28,43 @@ def timer_func(func):
 
 if __name__ == '__main__':
     results = Path(__file__).parents[1] / 'results'
-    dataset = fetch_adhd(1, data_dir=Path(__file__).parents[1] / 'data')
+    dataset = fetch_adhd(6, data_dir=Path(__file__).parents[1] / 'data')
     func = load_img(dataset.func[0])
     conf = dataset.confounds[0]
     mask = binarize_img(mean_img(func))
     # standardise original data
-    preprocessor = NiftiMasker(standardize=True, detrend=True)
-    data = preprocessor.inverse_transform(preprocessor.fit_transform(func, conf))
-
+    preprocessor = NiftiMasker(standardize=True, detrend=True,
+                               low_pass=0.1, high_pass=0.01, t_r=2.,
+                               smoothing_fwhm=5,
+                               memory=str(Path(__file__).parents[1] / 'nilearn_cache'),
+                               memory_level=1, verbose=0)
+    data = preprocessor.fit_transform(func, conf)
+    data_nii = preprocessor.inverse_transform(data)
 
     @timer_func
     def mask_adhd_difumo(strategy, maps):
-        masker = NiftiMapsMasker(maps, strategy=strategy,
-                                 standardize=True, detrend=True,
-                                 resampling_target='data')
-        timeseries = masker.fit_transform(func, conf)
+        masker = NiftiMapsMasker(maps, strategy=strategy)
+        timeseries = masker.fit_transform(data_nii)
         return timeseries, masker
 
-
+    r2_scores = {}
     for dim in DIFUMO_DIM:
         print(f'================={dim}=================')
-
         atlas = fetch_atlas_difumo(dimension=dim,
-                                resolution_mm=3,
-                                data_dir=Path(__file__).parents[1] / 'data')
-        r2_scores = {}
-        for strategy in ['ridge', 'ols']:
+                                   resolution_mm=3,
+                                   data_dir=Path(__file__).parents[1] / 'data')
+        r2_scores[dim] = {}
+        for strategy in ['ols', 'ridge',]:
             print(strategy)
-            print(f"Time to extract difumo {dim} dimensions:")
-            timeseries, masker = mask_adhd_difumo(strategy, atlas.maps)
-            compressed = masker.inverse_transform(timeseries)
-            r2 = math_img("1 - np.var(data - compressed, axis=-1)", data=data, compressed=compressed)
-            r2 = math_img("mask * img", mask=mask, img=r2)
-            r2_scores[strategy] = [r2, compressed]
-            view = view_img(r2)
-            view.save_as_html(str(results / f'extraction-{strategy}_difumo-{dim}.html'))
+            if strategy != 'dypac':
+                print(f"Time to extract difumo {dim} dimensions:")
+                timeseries, masker = mask_adhd_difumo(strategy, atlas.maps)
+                compressed_raw = masker.inverse_transform(timeseries)
+                standard_masker = NiftiMasker(mask, standardize=True)  # the scale is weird for ols
+                compressed = standard_masker.fit_transform(compressed_raw)
+                r2 = 1 - (np.var(data - compressed, axis=0) / np.var(data, axis=0))
+                r2_map = standard_masker.inverse_transform(r2)
+            r2_scores[dim][strategy] = {'r2': r2_map,
+                                        'compressed_z': compressed,
+                                        'compressed_raw':compressed_raw}
     print(f'=====================================')

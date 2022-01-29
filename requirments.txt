@@ -1,2 +1,4 @@
 git+https://github.com/htwangtw/nilearn.git@ols_masker
 matplotlib
+dypac
+jupyter
