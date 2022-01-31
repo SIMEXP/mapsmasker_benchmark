@@ -1,4 +1,4 @@
 git+https://github.com/htwangtw/nilearn.git@ols_masker
 matplotlib
-dypac
+dypac==0.6.0
 jupyter

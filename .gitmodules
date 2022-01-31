@@ -1,3 +1,6 @@
 [submodule "nilearn"]
 	path = nilearn
 	url = git@github.com:htwangtw/nilearn.git
+[submodule "dypac"]
+	path = dypac
+	url = git@github.com:courtois-neuromod/dypac.git
